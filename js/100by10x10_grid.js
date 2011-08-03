@@ -49,7 +49,13 @@
 	gridElement = appendGridContainer();
 	stylesElement = appendStyles();
 
-}(document, {
-	// Стили для сетки
-	styles: '.da-grid { background: url(img/100x10x10_grid.png); position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 999 }'
-}));
+}(document,
+
+	/**
+	 * Объект настроек для букмарклета
+	 */
+	{
+		// Стили для сетки
+		styles: '.da-grid { background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAABBElEQVR42u3XwQ2AIBAEQCrA2KT9d4CoBcAD8BLG5H77usFLNuXjLCbOvCD1S62p3yU3PwcEiBwQIHJAgMgBAWKBv4A8YRNjPpD250UPyPUsGQgQIECAyAEBYtFAgABZDKKpa+r+ECcLiBwQIBYNBAgQIECAaOpGU3ey5IAAsWggQIAAAQIECBBNXVOXc7KAWDQQIECAAAECBAgQTd1o6k6WRQMBAgQIECBAgAABIqepa+rFH+JkAbFoIECAAAECBIgcEE3daOpOlkUDAQIECBAgQOSAAAGiqWvqXr6TBQQIECBAgGyfAwIECBBN3Uxv6l50nBwQIHJAgMgBASIHBIgFrs7diccA287A5QoAAAAASUVORK5CYII=); position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 999 }'
+	}
+));
