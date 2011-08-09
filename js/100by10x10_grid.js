@@ -4,50 +4,131 @@
  */
 ;(function(document, options) {
 
-	var documentBody = document.getElementsByTagName('body')[0],
-		gridElement,
-		stylesElement,
+	var documentBody = document.getElementsByTagName('body')[0];
 
-		/**
-		 * Добавляет контейнер для сетки на страницу
-		 */
-		appendGridContainer = function() {
-			var gridContainer = document.createElement('div');
+	/**
+	 * Объект сетки
+	 */
+	var Grid = function(container, options) {
 
-			gridContainer.className = 'da-grid';
-			documentBody.appendChild(gridContainer);
+		var Grid = function(container, options) {
+			this.grid = null; // DOM-элемент сетки
+			this.gridStyles = null; // DOM-элемент стилей сетки
 
-			return gridContainer;
-		},
+			this.options = options || {};
 
-		/**
-		 * Добавляет стили для сетки
-		 */
-		appendStyles = function() {
-			var head = document.getElementsByTagName('head'),
-				stylesElement;
-
-			if (options.styles) {
-				stylesElement = document.createElement('style');
-				stylesElement.type = 'text/css';
-				if (stylesElement.styleSheet) {
-					stylesElement.styleSheet.cssText = options.styles;
-				} else {
-					stylesElement.appendChild(document.createTextNode(options.styles));
-				}
-
-				if (head && head[0]) {
-					head[0].appendChild(stylesElement);
-				} else {
-					documentBody.write('<style type="text/css">' + options.styles + '</styles>');
-				}
-			}
-
-			return stylesElement;
+			this.initialize.apply(this, [options]);
 		};
 
-	gridElement = appendGridContainer();
-	stylesElement = appendStyles();
+		$.extend(Grid.prototype, {
+
+			/**
+			 * Конструктор
+			 */
+			initialize: function(options) {
+				this.addGrid();
+			},
+
+			/**
+			 * Добавляет сетку на страницу
+			 */
+			addGrid: function() {
+				if (!this.grid) {
+					var gridContainer = document.createElement('div');
+
+					gridContainer.className = 'da-grid';
+					documentBody.appendChild(gridContainer);
+
+					this.grid = gridContainer;
+
+					this.appendStyles();
+				}
+
+				return this;
+			},
+
+			/**
+			 * Добавляет стили для сетки
+			 */
+			appendStyles: function() {
+				var head = document.getElementsByTagName('head'),
+					stylesElement;
+
+				if (!this.gridStyles) {
+					if (this.options.styles) {
+						stylesElement = document.createElement('style');
+						stylesElement.type = 'text/css';
+						if (stylesElement.styleSheet) {
+							stylesElement.styleSheet.cssText = this.options.styles;
+						} else {
+							stylesElement.appendChild(document.createTextNode(this.options.styles));
+						}
+
+						if (head && head[0]) {
+							head[0].appendChild(stylesElement);
+						} else {
+							documentBody.write('<style type="text/css">' + this.options.styles + '</styles>');
+						}
+					}
+
+					this.gridStyles = stylesElement;
+				}
+
+				return this;
+			},
+
+			/**
+			 * Удаляет сетку
+			 */
+			removeGrid: function() {
+
+			}
+
+		});
+
+		return new Grid(container, options);
+
+	};
+	
+	
+	
+	var each = function(obj, iterator, context) {
+		var breaker = {};
+
+		for (var key in obj) {
+			if (hasOwnProperty.call(obj, key)) {
+				if (iterator.call(context, obj[key], key, obj) === breaker) return;
+			}
+		}
+	};
+
+	/**
+	 * Наш собственный ручной "jQuery" с блекджеком и маркитантками
+	 */
+	var $ = function() {
+
+		return {
+
+			/**
+			 * Расширяет текущий объект данными объекта-источника
+			 * @param {!Object} obj - источник
+			 */
+			extend: function(obj) {
+				each(Array.prototype.slice.call(arguments, 1), function(source) {
+					for (var prop in source) {
+						if (source[prop] !== void 0) obj[prop] = source[prop];
+					}
+				});
+
+				return obj;
+			}
+
+		}
+
+	}();
+	
+	// Создадим новый объект сетки
+	return new Grid(documentBody, options);
 
 }(document,
 
