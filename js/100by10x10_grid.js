@@ -1,6 +1,9 @@
 /**
  * Позволяет добавлять на любую страницу нашу сетку 10x10 пикселей (квадратами
  * по 100 пикселей). Сетка управляемая, можно её двигать и всячески настраивать.
+ * 
+ * Добавляется на страницу с помощью вот такой ссылки
+ * javascript:(function(){_my_script=document.createElement('SCRIPT');_my_script.type='text/javascript';_my_script.src='https://github.com/d-kokin-parc/100by10x10_grid/raw/master/js/100by10x10_grid.js';document.getElementsByTagName('head')[0].appendChild(_my_script);})();
  */
 ;(function(document, options) {
 
@@ -116,6 +119,8 @@
 			bindGrid: function() {
 				$.attachEventHandler(document, 'keydown', function(event) {
 					var keyCode = event.keyCode;
+
+					$.preventDefault(event);
 
 					if (this.keymap[keyCode] && typeof this[this.keymap[keyCode]] === 'function') {
 						this[this.keymap[keyCode]]();
@@ -273,7 +278,32 @@
 				} else if (element.detachEvent) {
 					element.detachEvent('on' + eventString, handler);
 				}
-			}
+			},
+
+			/**
+			 * Предотвращает стандартное действие события
+			 * @param {!Object} e - событие
+			 */
+			preventDefault: function(e) {
+				e = e || win.event;
+				if (e.preventDefault) {
+					e.preventDefault();
+				}
+				e.returnValue = false; // IE
+			},
+
+			/**
+			 * Останавливает всплытие события
+			 * @param {!Object} e - событие
+			 */
+			stopEventPropagation: function(e) {
+				e = e || win.event;
+
+				if (e.stopPropagation) {
+					e.stopPropagation();
+				}
+				e.cancelBubble = true; // IE
+			},
 
 		}
 
@@ -289,6 +319,6 @@
 	 */
 	{
 		// Стили для сетки
-		styles: '.da-grid { background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAABBElEQVR42u3XwQ2AIBAEQCrA2KT9d4CoBcAD8BLG5H77usFLNuXjLCbOvCD1S62p3yU3PwcEiBwQIHJAgMgBAWKBv4A8YRNjPpD250UPyPUsGQgQIECAyAEBYtFAgABZDKKpa+r+ECcLiBwQIBYNBAgQIECAaOpGU3ey5IAAsWggQIAAAQIECBBNXVOXc7KAWDQQIECAAAECBAgQTd1o6k6WRQMBAgQIECBAgAABIqepa+rFH+JkAbFoIECAAAECBIgcEE3daOpOlkUDAQIECBAgQOSAAAGiqWvqXr6TBQQIECBAgGyfAwIECBBN3Uxv6l50nBwQIHJAgMgBASIHBIgFrs7diccA287A5QoAAAAASUVORK5CYII=); position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 999 }'
+		styles: '.da-grid { background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAABBElEQVR42u3XwQ2AIBAEQCrA2KT9d4CoBcAD8BLG5H77usFLNuXjLCbOvCD1S62p3yU3PwcEiBwQIHJAgMgBAWKBv4A8YRNjPpD250UPyPUsGQgQIECAyAEBYtFAgABZDKKpa+r+ECcLiBwQIBYNBAgQIECAaOpGU3ey5IAAsWggQIAAAQIECBBNXVOXc7KAWDQQIECAAAECBAgQTd1o6k6WRQMBAgQIECBAgAABIqepa+rFH+JkAbFoIECAAAECBIgcEE3daOpOlkUDAQIECBAgQOSAAAGiqWvqXr6TBQQIECBAgGyfAwIECBBN3Uxv6l50nBwQIHJAgMgBASIHBIgFrs7diccA287A5QoAAAAASUVORK5CYII=); position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999 }'
 	}
 ));
