@@ -23,15 +23,23 @@
 		$.extend(Grid.prototype, {
 
 			/**
+			 * Координаты сетки
+			 */
+			coords: {
+				x: 0,
+				y: 0
+			},
+
+			/**
 			 * Таблица соответствий кодов нажимаемых на клавиатуре клавиш
 			 * предполагаемым действиям с таблицей
 			 */
 			keymap: {
-				37: this.moveLeft,
-				38: this.moveUp,
-				39: this.moveRight,
-				40: this.moveDown,
-				27: this.removeGrid
+				37: 'moveLeft',
+				38: 'moveUp',
+				39: 'moveRight',
+				40: 'moveDown',
+				27: 'removeGrid'
 			},
 
 			/**
@@ -56,6 +64,17 @@
 					this.grid = gridContainer;
 
 					this.appendStyles();
+				}
+
+				return this;
+			},
+
+			/**
+			 * Перерисовывает сетку
+			 */
+			redrawGrid: function() {
+				if (this.grid) {
+					this.grid.style.backgroundPosition = this.coords.x + 'px ' + this.coords.y + 'px';
 				}
 
 				return this;
@@ -98,8 +117,13 @@
 				$.attachEventHandler(document, 'keydown', function(event) {
 					var keyCode = event.keyCode;
 
-					if (this.keymap[keyCode] && typeof this.keymap[keyCode] === 'function') {
-						this.keymap[keyCode]();
+					if (this.keymap[keyCode] && typeof this[this.keymap[keyCode]] === 'function') {
+						this[this.keymap[keyCode]]();
+					}
+
+					// Не могу разобраться почему обработчик на самом деле не детачится
+					if (keyCode == 29) {
+						$.detachEventHandler(document, 'keydown', arguments.callee);
 					}
 				}, this);
 
@@ -110,8 +134,52 @@
 			 * Удаляет сетку
 			 */
 			removeGrid: function() {
-				console.log('Grid removed');
-			}
+				// Чистим DOM и память
+				this.gridStyles && this.gridStyles.parentNode.removeChild(this.gridStyles);
+				this.grid && container.removeChild(this.grid);
+
+				this.gridStyles = this.grid = null;
+			},
+
+			/**
+			 * 
+			 * Управление сеткой
+			 * 
+			 */
+
+			// TODO: Неплохо-бы тут впихнуть работу с координатами через сеттеры
+
+			/**
+			 * Двигает сетку влево на 1 пиксель
+			 */
+			moveLeft: function() {
+				this.coords.x--;
+				this.redrawGrid();
+			},
+
+			/**
+			 * Двигает сетку вправо на 1 пиксель
+			 */
+			moveRight: function() {
+				this.coords.x++;
+				this.redrawGrid();
+			},
+
+			/**
+			 * Двигает сетку вверх на 1 пиксель
+			 */
+			moveUp: function() {
+				this.coords.y--;
+				this.redrawGrid();
+			},
+
+			/**
+			 * Двигает сетку вниз на 1 пиксель
+			 */
+			moveDown: function() {
+				this.coords.y++;
+				this.redrawGrid();
+			},
 
 		});
 
@@ -174,7 +242,7 @@
 			 * Навешивает событие, сохраняя контекст
 			 * @param {!Object} element - элемент-источник события
 			 * @param {string} eventString - имя события
-			 * @param {function(?Object)} - обработчик события
+			 * @param {function(?Object)} handler - обработчик события
 			 * @param {?Object} - контекст выполнения обработчика
 			 */
 			attachEventHandler: function(element, eventString, handler, context) {
@@ -191,12 +259,26 @@
 						element.attachEvent('on' + eventString, handler);
 					}
 				}
+			},
+
+			/**
+			 * Удаляет обработчик события с заданного элемента
+			 * @param {!Object} element - элемент-источник события
+			 * @param {string} eventString - имя события
+			 * @param {function(?Object)} handler - обработчик события
+			 */
+			detachEventHandler: function(element, eventString, handler) {
+				if (element.removeEventListener) {
+					element.removeEventListener(eventString, handler, false);
+				} else if (element.detachEvent) {
+					element.detachEvent('on' + eventString, handler);
+				}
 			}
 
 		}
 
 	}();
-	
+
 	// Создадим новый объект сетки
 	return new Grid(documentBody, options);
 
