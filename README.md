@@ -9,7 +9,7 @@
 
 ## Как это использовать ##
 
-Очень просто. Нужно вот [эту ссылку](javascript:(function(){_my_script=document.createElement('SCRIPT');_my_script.type='text/javascript';_my_script.src='https://github.com/d-kokin-parc/100by10x10_grid/raw/master/js/100by10x10_grid.js';document.getElementsByTagName('head')[0].appendChild(_my_script);})(); "Макетная сетка 10x10 Parcsis") драг-н-дропом перетащить на панель закладок вашего браузера. Затем на интересующем сайте просто кликнуть на эту закладку, немного подождать и ужаснуться, насколько ваша вёрстка не соответствует сетке ;) Более наглядно показано [здесь](http://youtu.be/TyXnaQ4Lqsc).
+Очень просто. Нужно вот [эту ссылку]: javascript:(function(){_my_script=document.createElement('SCRIPT');_my_script.type='text/javascript';_my_script.src='https://github.com/d-kokin-parc/100by10x10_grid/raw/master/js/100by10x10_grid.js';document.getElementsByTagName('head')[0].appendChild(_my_script);})(); (Макетная сетка 10x10 Parcsis) драг-н-дропом перетащить на панель закладок вашего браузера. Затем на интересующем сайте просто кликнуть на эту закладку, немного подождать и ужаснуться, насколько ваша вёрстка не соответствует сетке ;) Более наглядно показано [здесь](http://youtu.be/TyXnaQ4Lqsc).
 
 
 ### Список ожидаемых в будущем фич: ###
