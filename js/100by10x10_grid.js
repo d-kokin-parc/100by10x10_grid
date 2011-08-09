@@ -23,10 +23,24 @@
 		$.extend(Grid.prototype, {
 
 			/**
+			 * Таблица соответствий кодов нажимаемых на клавиатуре клавиш
+			 * предполагаемым действиям с таблицей
+			 */
+			keymap: {
+				37: this.moveLeft,
+				38: this.moveUp,
+				39: this.moveRight,
+				40: this.moveDown,
+				27: this.removeGrid
+			},
+
+			/**
 			 * Конструктор
 			 */
 			initialize: function(options) {
-				this.addGrid();
+				this
+					.addGrid()
+					.bindGrid();
 			},
 
 			/**
@@ -78,10 +92,25 @@
 			},
 
 			/**
+			 * Навешивает события на сетку
+			 */
+			bindGrid: function() {
+				$.attachEventHandler(document, 'keydown', function(event) {
+					var keyCode = event.keyCode;
+
+					if (this.keymap[keyCode] && typeof this.keymap[keyCode] === 'function') {
+						this.keymap[keyCode]();
+					}
+				}, this);
+
+				return this;
+			},
+
+			/**
 			 * Удаляет сетку
 			 */
 			removeGrid: function() {
-
+				console.log('Grid removed');
 			}
 
 		});
@@ -89,23 +118,41 @@
 		return new Grid(container, options);
 
 	};
-	
-	
-	
-	var each = function(obj, iterator, context) {
-		var breaker = {};
 
-		for (var key in obj) {
-			if (hasOwnProperty.call(obj, key)) {
-				if (iterator.call(context, obj[key], key, obj) === breaker) return;
-			}
-		}
-	};
+
 
 	/**
 	 * Наш собственный ручной "jQuery" с блекджеком и маркитантками
 	 */
 	var $ = function() {
+
+		/**
+		 * Применяет контекст к методу
+		 * @param {!Object} obj - контекст
+		 * @param {function(?Object)} method - метод
+		 * @return {Object}
+		 */
+		var _contextOf = function(obj, method) {
+				return function() {
+					method.apply(obj, arguments);
+				};
+			},
+
+			/**
+			 * Итератор по объекту
+			 * @param {!Object} obj - объект
+			 * @param {function(?Object)} method - метод для итерирования
+			 * @param {?Object} context - контекст выполнения итератора
+			 */
+			_each = function(obj, iterator, context) {
+				var breaker = {};
+
+				for (var key in obj) {
+					if (hasOwnProperty.call(obj, key)) {
+						if (iterator.call(context, obj[key], key, obj) === breaker) return;
+					}
+				}
+			};
 
 		return {
 
@@ -114,13 +161,36 @@
 			 * @param {!Object} obj - источник
 			 */
 			extend: function(obj) {
-				each(Array.prototype.slice.call(arguments, 1), function(source) {
+				_each(Array.prototype.slice.call(arguments, 1), function(source) {
 					for (var prop in source) {
 						if (source[prop] !== void 0) obj[prop] = source[prop];
 					}
 				});
 
 				return obj;
+			},
+
+			/**
+			 * Навешивает событие, сохраняя контекст
+			 * @param {!Object} element - элемент-источник события
+			 * @param {string} eventString - имя события
+			 * @param {function(?Object)} - обработчик события
+			 * @param {?Object} - контекст выполнения обработчика
+			 */
+			attachEventHandler: function(element, eventString, handler, context) {
+				if (typeof context != 'undefined' && context) {
+					if (element.addEventListener) { // W3C DOM
+						element.addEventListener(eventString, _contextOf(context, handler), false);
+					} else if (element.attachEvent) {// IE DOM
+						element.attachEvent('on' + eventString, _contextOf(context, handler));
+					}
+				} else {
+					if (element.addEventListener) {// W3C DOM
+						element.addEventListener(eventString, handler, false);
+					} else if (element.attachEvent) {// IE DOM
+						element.attachEvent('on' + eventString, handler);
+					}
+				}
 			}
 
 		}
